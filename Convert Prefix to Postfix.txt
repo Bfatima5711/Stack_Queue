@@ -1,0 +1,107 @@
+********Problem Statement**********
+
+*****Convert Prefix to Postfix******
+
+Problem statement
+You are given a string ‘s’ of size ’n’, representing the prefix form of a valid mathematical expression.
+
+
+
+Your task is to find out its corresponding postfix expression.
+
+
+
+The expected time and space complexity is O(n) and O(n), where ‘n’ is the size of the string ‘s’.
+
+
+
+Note:
+The only operators used in the expressions are ‘+’, ‘-’, ‘*’, ‘/’.
+
+Example:
+Input: ‘n’ = 5, ‘s’ = “/A+BC”
+
+Output: ABC+/
+
+Explanation: For ‘s’ = “/A+BC”, the correct postfix expression is “ABC+/”.
+
+Detailed explanation ( Input/output format, Notes, Images )
+Sample Input 1:
+5
+/A+BC
+
+Sample Output 1 :
+ABC+/
+
+Explanation Of Sample Input 1:
+Input: ‘n’ = 5, ‘s’ = “/A+BC”
+
+Output: ABC+/
+
+Explanation: For ‘s’ = “/A+BC”, the correct postfix expression is “ABC+/”.
+
+
+Sample Input 2:
+9
+-/A+BC*DE
+
+Sample Output 2:
+ABC+/DE*-
+
+Explanation of sample output 2:
+Input: ‘n’ = 9, ‘s’ = “-/A+BC*DE”
+
+Output: ABC+/DE*-
+
+Explanation: For ‘s’ = “-/A+BC*DE”, the correct postfix expression is “ABC+/DE*-”.
+
+Constraints:
+3 <= n < 10^4
+The characters in ‘s’ are either one of {‘+’, ‘-’, ‘/’, ‘*’} or is one of the Uppercase Letters.
+
+Time Limit: 1 sec
+
+*******Code*******
+
+import java.util.Stack;
+
+public class Solution {
+    public static String reverse(String s){
+        String resStr = "";
+        for(int i = s.length() - 1; i >= 0; i--){
+            resStr += s.charAt(i)+""; 
+        }
+        return resStr;
+    }
+    public static boolean isOperator(char c){
+        if(c == '^' || c == '+' || c == '-' || c == '*' || c == '/' ){
+            return true;
+        }
+        return false;
+    }
+    public static String preToPost(String s) {
+        // steps to solve pre to post exp 1) reverse the exp 
+        //2) take stack el as operant 1 + operand 2 + operator
+
+        Stack<String> st = new Stack<>();
+
+        s = reverse(s);
+
+        for(int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+
+            if(Character.isLetterOrDigit(c)){
+                st.push(c+"");
+            }else if(isOperator(c)){
+                if(!st.isEmpty() && st.size() >= 2){
+                    String first = st.pop();
+                    String second = st.pop();
+                    String res = ( first + second + c );
+                    st.push(res);
+                }
+            }
+        }
+        String ans = st.pop();
+        return ans;
+    }
+}
