@@ -1,0 +1,125 @@
+********Problem statement***********
+********Generate Parentheses********
+
+Given an integer N representing the number of pairs of parentheses, the task is to generate all combinations of well-formed(balanced) parentheses.
+
+
+Example 1:
+
+Input:
+N = 3
+Output:
+((()))
+(()())
+(())()
+()(())
+()()()
+Example 2:
+Input:
+N = 1
+Output:
+()
+
+Your Task:  
+You don't need to read input or print anything. Complete the function AllParenthesis() which takes N as input parameter and returns the list of balanced parenthesis.
+
+Expected Time Complexity: O(2N * N).
+Expected Auxiliary Space: O(2*N*X), X = Number of valid Parenthesis.
+
+Constraints:
+1 ≤ N ≤ 12
+
+*******C0de***********
+
+class Solution {
+    // public boolean isValid(List<Character> str){
+    //     int cnt = 0;
+    //     for(int i = 0; i < str.size(); i++){
+    //         if(str.get(i) == '('){
+    //             cnt++;
+    //         }else{
+    //             cnt--;
+    //         }
+            
+    //         //cnt is less than 0 means it is already not balenced so need need to check eg = ())( case
+    //         if(cnt < 0){
+    //             return false;
+    //         }
+    //     }
+      
+    //     return (cnt == 0);
+    // }
+    // public String makeString(List<Character> str){
+    //     String res = "";
+    //     for(int i = 0; i < str.size(); i++){
+    //         res += str.get(i)+"";
+    //     }
+    //     return res;
+    // }
+    // public void findParenthesis(int n, List<Character> str, List<String> res){
+    //     if(str.size() == (2 * n)){
+    //         if(isValid(str) == true){
+    //             res.add(makeString(str));
+    //             return;
+    //         }
+    //         return;
+    //     }
+        
+    //     str.add('(');
+    //     findParenthesis(n, str, res);
+    //     str.remove(str.size()-1);
+        
+    //     str.add(')');
+    //     findParenthesis(n, str, res);
+    //     str.remove(str.size()-1);
+        
+    // }
+    
+    // public List<String> AllParenthesis(int n) 
+    // {
+    //     // TC:O(2^2*n) * O(2*n) * O(n) SC:O(2*n) recursion stack space
+        
+    //     List<String> res = new ArrayList<>();
+    //     List<Character> str = new ArrayList<Character>();
+    //     findParenthesis(n, str, res);
+    //     return res;
+    // }
+    
+    public String makeString(List<Character> str){
+        String res = "";
+        for(int i = 0; i < str.size(); i++){
+            res += str.get(i)+"";
+        }
+        return res;
+    }
+    public void findParenthesis(int n, List<Character> str, List<String> res, int open, int close){
+        if(str.size() == (2 * n)){
+            res.add(makeString(str));
+            return;
+        }
+        
+        if(open < n){
+            str.add('(');
+            findParenthesis(n, str, res, open+1, close);
+            str.remove(str.size()-1);
+        }
+        
+        if(close < open){
+            str.add(')');
+            findParenthesis(n, str, res, open, close+1);
+            str.remove(str.size()-1);
+        }
+        
+    }
+    
+    public List<String> AllParenthesis(int n) 
+    {
+        // TC:O(2^2*n) * O(n) SC:O(2*n) recursion stack space
+        
+        List<String> res = new ArrayList<>();
+        List<Character> str = new ArrayList<Character>();
+        int open = 0, close = 0;
+        findParenthesis(n, str, res, open, close);
+        return res;
+    }
+}
