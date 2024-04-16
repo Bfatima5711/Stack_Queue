@@ -1,0 +1,104 @@
+*******Problem Statement*********
+******* Sum of Subarray Minimums********
+
+Given an array of integers arr, find the sum of min(b), where b ranges over every (contiguous) subarray of arr. Since the answer may be large, return the answer modulo 109 + 7.
+
+ 
+
+Example 1:
+
+Input: arr = [3,1,2,4]
+Output: 17
+Explanation: 
+Subarrays are [3], [1], [2], [4], [3,1], [1,2], [2,4], [3,1,2], [1,2,4], [3,1,2,4]. 
+Minimums are 3, 1, 2, 4, 1, 1, 2, 1, 1, 1.
+Sum is 17.
+Example 2:
+
+Input: arr = [11,81,94,43,3]
+Output: 444
+ 
+
+Constraints:
+
+1 <= arr.length <= 3 * 104
+1 <= arr[i] <= 3 * 104
+
+******Code*******
+
+class Solution {
+    public int[] getNsl(int[] arr, int n){
+         int[] res = new int[n];
+        Stack<Integer> st = new Stack<>();
+
+        for(int i = 0; i < n; i++){
+            if(st.isEmpty()){
+                res[i] = -1;
+            }else{
+                while(!st.isEmpty() && arr[st.peek()] >= arr[i]){
+                    st.pop();
+                }
+
+                res[i] = st.isEmpty() ? -1 : st.peek();
+            }
+            st.push(i);
+        }
+        return res;
+    }
+
+    public int[] getNsr(int[] arr, int n){
+        int[] res = new int[n];
+        Stack<Integer> st = new Stack<>();
+
+        for(int i = n-1; i >= 0; i--){
+            if(st.isEmpty()){
+                res[i] = n;
+            }else{
+                while(!st.isEmpty() && arr[st.peek()] > arr[i]){
+                    st.pop();
+                }
+
+               res[i] = st.isEmpty() ? n : st.peek();
+            }
+            st.push(i);
+        }
+        return res;
+    }
+
+    public int sumSubarrayMins(int[] arr) {
+        // int len = arr.length;
+        // int m = (int) 1e9+7;
+        // long minSum = 0;
+        // for(int i = 0; i < len; i++){
+        //     for(int j = i; j < len; j++){
+        //         long min = arr[i];
+        //         for(int  k = i+1; k <= j; k++){
+        //             if(min > arr[k]){
+        //                 min = arr[k]; 
+        //             }
+        //         }
+        //         minSum = (minSum + min) % m;
+        //     }
+        // }
+        // return (int)minSum ;
+
+        int n = arr.length;
+        long sum = 0;
+        int m = (int)1e9+7;
+
+        int[] nsl = getNsl(arr, n);
+        int[] nsr = getNsr(arr, n);
+
+        for(int i = 0; i < n; i++){
+            long ls = i - nsl[i];
+            long rs = nsr[i] - i;
+
+            long totalWays = (ls * rs);
+            long totalSum = arr[i] * totalWays;
+
+            sum = (sum + totalSum) % m;
+        }
+
+        return (int)sum;
+    }
+}
