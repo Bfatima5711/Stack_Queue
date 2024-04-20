@@ -1,0 +1,125 @@
+*******Problem Statement*********
+******Largest Rectangle in Histogram********
+
+Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.
+
+ 
+
+Example 1:
+
+
+Input: heights = [2,1,5,6,2,3]
+Output: 10
+Explanation: The above is a histogram where width of each bar is 1.
+The largest rectangle is shown in the red area, which has an area = 10 units.
+Example 2:
+
+
+Input: heights = [2,4]
+Output: 4
+ 
+
+Constraints:
+
+1 <= heights.length <= 105
+0 <= heights[i] <= 104
+
+*****Code********
+
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        //Approach 1: TC:O(n*2n) SC:O(1)
+        int len = heights.length;
+        int max = Integer.MIN_VALUE;
+
+        for(int i = 0;  i < len; i++){
+            int curr = heights[i];
+            for(int j = i - 1; j >= 0; j--){
+                if(heights[j] >= heights[i]){
+                    curr += heights[i];
+                }else{
+                    break;
+                }
+            }
+            for(int k = i + 1; k < len; k++){
+                if(heights[k] >= heights[i]){
+                    curr += heights[i];
+                }else{
+                    break;
+                }
+            }
+
+            max = Math.max(max, curr);
+        }
+        return max;
+
+        //Approach 2: overall TC:O(n) SC:O(3n) for nextsmleft or right arr and stack it is nearly O(n) 
+        Stack<Integer> st = new Stack<>();
+        int len = heights.length;
+        int[] nextSmallLeft = new int[len];
+        int[] nextSmallRight = new int[len];
+
+        //TC:O(n) + O(n)
+        for(int i = 0; i < len; i++){
+            while(!st.isEmpty() && heights[st.peek()] >= heights[i]){
+                st.pop();
+            }
+
+            if(st.isEmpty()){
+                nextSmallLeft[i] = 0;
+            }else{
+                nextSmallLeft[i] = st.peek() + 1;
+            }
+            st.push(i);
+        }
+        while(!st.isEmpty()){
+            st.pop();
+        }
+        //TC:O(n) + O(n)
+        for(int i = len-1; i >= 0; i--){
+            while(!st.isEmpty() && heights[st.peek()] >= heights[i]){
+                st.pop();
+            }
+
+            if(st.isEmpty()){
+                nextSmallRight[i] = len - 1;
+            }else{
+                nextSmallRight[i] = st.peek() - 1;
+            }
+            st.push(i);
+        }
+
+        int max = Integer.MIN_VALUE;
+
+         TC:O(n)
+        for(int i = 0; i < len; i++){
+            max = Math.max(max, heights[i] * (nextSmallRight[i] - nextSmallLeft[i] + 1));
+        }
+
+        return max;
+
+        // Approach 3: TC: O(n) + O(n) SC:O(n) for stroing el into the stack
+
+        Stack<Integer> st = new Stack<>();
+        int n = heights.length;
+        int max = 0;
+        //for loop TC: O(n) 
+        for(int i = 0; i <= n; i++){
+            //while loop is runing for all the elements only once so O(n) only
+            // if it it is running for evry el n times then only TC is n * n but in 
+            //current case it is O(n) + O(n)
+            while(!st.isEmpty() && (i == n || heights[st.peek()] >= heights[i])){
+                int height = heights[st.peek()];
+                st.pop();
+                int width = 0;
+
+                if(st.isEmpty()) width = i;
+                else width = i - st.peek() - 1;
+
+                max = Math.max(max, (width * height));
+            }
+            st.push(i);
+        }
+        return max;
+    }
+}
